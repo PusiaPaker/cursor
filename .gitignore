@@ -1,0 +1,30 @@
+# Build output
+/.cache/
+/build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Compiled binaries and objects
+*.o
+*.obj
+*.lo
+*.slo
+*.out
+*.exe
+*.app
+
+# Static libraries
+*.a
+*.lib
+*.la
+*.lai
+
+# Logs and misc
+*.log
+*.idx
+
+.vscode/
+.idea/
+*.swp
