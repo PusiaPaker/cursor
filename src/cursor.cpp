@@ -14,12 +14,13 @@ namespace cur {
         return *this;
     }
 
-    Cursor& Cursor::operator<<(Cursor& (*func)(Cursor&)) {
-        return func(*this);
-    }
-
     Cursor& endl(Cursor& cur) {
         cur << "\n";
+        return cur;
+    }
+
+    Cursor& clearStyle(Cursor& cur) {
+        cur << CLEAR_STYLE;
         return cur;
     }
 
@@ -27,13 +28,15 @@ namespace cur {
         write(STDOUT_FILENO, c_str, strlen(c_str));
     }
 
-    void Cursor::move(int row, int col) const {
+    Cursor& Cursor::move(int row, int col) {
         std::string str = std::format("\033[{};{}H", row, col);
         c_strWrite(str.c_str());
+        return (*this);
     }
 
-    void Cursor::clear() const {
+    Cursor& Cursor::clear() {
         const char* c_str = "\033[2J\0";
         c_strWrite(c_str);
+        return (*this);
     }
 }
