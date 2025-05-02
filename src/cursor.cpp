@@ -25,6 +25,12 @@ namespace cur {
     }
 
     void Cursor::c_strWrite(const char* c_str) const {
+        #ifdef _WIN32
+            if (GetConsoleOutputCP() != CP_UTF8) {
+                std::cerr << "Error: console is not in UTF-8 mode.\nInclude SetConsoleOutputCP(CP_UTF8); in your main";
+                exit(0);
+            }
+        #endif
         write(STDOUT_FILENO, c_str, strlen(c_str));
     }
 
@@ -35,7 +41,7 @@ namespace cur {
     }
 
     Cursor& Cursor::clear() {
-        const char* c_str = "\033[2J\0";
+        const char* c_str = CLEAR_SCREEN;
         c_strWrite(c_str);
         return (*this);
     }

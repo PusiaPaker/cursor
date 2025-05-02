@@ -2,9 +2,10 @@
 
 #include <string>
 #include <format>
-#include <iostream>
+
 
 #define CLEAR_STYLE "\033[0m"
+#define CLEAR_SCREEN "\033[2J"
 
 namespace cur {
     class Cursor;
@@ -34,21 +35,22 @@ namespace cur {
         void c_strWrite(const char*) const;
     };
 
-    inline auto backgroundColor(int r, int g, int b){
+    enum class ColorMode { Background, Foreground };
+
+    inline auto color(ColorMode mode, int r, int g, int b) {
         return [=](Cursor& c) -> Cursor& {
-            std::string str = std::format("\033[48;2;{};{};{}m", r, g, b);
-            std::cout << str;
+            int code = (mode == ColorMode::Background) ? 48 : 38;
+            std::string str = std::format("\033[{};2;{};{};{}m", code, r, g, b);
             c << str.c_str();
             return c;
         };
     }
 
-    inline auto foregroundColor(int r, int g, int b){
-        return [=](Cursor& c) -> Cursor& {
-            std::string str = std::format("\033[38;2;{};{};{}m", r, g, b);
-            std::cout << str;
-            c << str.c_str();
-            return c;
-        };
+    inline auto backgroundColor(int r, int g, int b) {
+        return color(ColorMode::Background, r, g, b);
+    }
+
+    inline auto foregroundColor(int r, int g, int b) {
+        return color(ColorMode::Foreground, r, g, b);
     }
 }
