@@ -6,6 +6,13 @@
 
 #include "cursor.hpp"
 
+#if _WIN32 
+
+#include <windows.h>
+#include <iostream>
+
+#endif
+
 namespace cur {
     Cursor cout;
 

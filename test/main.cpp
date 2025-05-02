@@ -2,7 +2,16 @@
 
 using namespace cur;
 
+// Because windows hates us, and UTF8 is something to hard to implement
+#if _WIN32
+    #include <windows.h>
+#endif
+
 int main() {
+    #if _WIN32
+        SetConsoleOutputCP(CP_UTF8);
+    #endif
+
     // Clear the screen and position cursor
     cout.clear();
     cout.move(1, 0);
