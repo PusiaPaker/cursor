@@ -5,23 +5,24 @@ A lightweight, header-first C++ library for ANSI cursor and text styling in term
 
 Structure
 ---------
-
+```
 include/
-    cursor/
-        core.hpp         # Cursor class and stream interface
-        color.hpp        # RGB foreground/background color functions
-        movement.hpp     # Relative and absolute movement functions
-        style.hpp        # Bold, italic, underline, etc.
-        cursor.hpp       # Umbrella header that includes all of the above
+└── cursor/
+    ├── core.hpp         - Cursor class and stream interface
+    ├── color.hpp        - RGB foreground/background color functions
+    ├── movement.hpp     - Relative and absolute movement functions
+    ├── style.hpp        - Bold, italic, underline, etc.
+    └── cursor.hpp       - Umbrella header that includes all of the above
 
 src/
-    core.cpp             # Cursor method definitions
-    color.cpp            # Color implementation
-    movement.cpp         # Movement implementation
-    style.cpp            # Style code generator
+├── core.cpp             - Cursor method definitions
+├── color.cpp            - Color implementation
+├── movement.cpp         - Movement implementation
+└── style.cpp            - Style code generator
 
 test/
-    main.cpp             # Demonstration test file
+└── main.cpp             - Demonstration test file
+```
 
 Build Instructions
 ------------------
