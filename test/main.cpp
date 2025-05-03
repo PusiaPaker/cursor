@@ -2,6 +2,7 @@
 
 using namespace cur;
 
+
 // Because windows hates us, and UTF8 is something to hard to implement
 #if _WIN32
     #include <windows.h>
@@ -16,8 +17,9 @@ int main() {
     cout.clear();
     cout.move(1, 0);
     cout << backgroundColor(100, 0, 0) << "=== Cursor Test Start ===" << endl;
-
-    // Basic text and numbers
+    // setBold(false);
+    
+     // Basic text and numbers
     cout.move(2, 0);
     cout << foregroundColor(255, 136, 80) << "String test: " 
          << backgroundColor(0, 50, 78) 
@@ -90,7 +92,69 @@ int main() {
         cout << endl;
     }
 
+    // Style test: bold, italic, underline
+    cout.move(38, 0);
+    cout << setBold(true) << "Bold text " 
+         << setItalic(true) << "Italic "
+         << setUnderline(true) << "Underlined"
+         << clearStyle << endl;
+
+    // Style test: blinking, inverse, strikethrough
+    cout.move(39, 0);
+    cout << setBlinking(true) << "Blinking (may not work in all terminals) "
+         << setInverse(true) << "Inverse "
+         << setStrikethrough(true) << "Strikethrough"
+         << clearStyle << endl;
+
+    // Style reset mid-line
+    cout.move(40, 0);
+    cout << setBold(true) << "Bold " << clearStyle << "Normal" << endl;
+
+    // Cursor visibility toggle
+    cout.move(41, 0);
+    cout << "Cursor visible -> ";
+    cout << setCursorVisibility(false);
+    cout << "(now hidden)";
+    cout << setCursorVisibility(true);
+    cout << " -> visible again" << endl;
+
+    // Error test: large color values
+    cout.move(43, 0);
+    cout << "Clamped color test (expected to fallback or error visually): ";
+    cout << backgroundColor(999, -20, 999) << " ??? " << clearStyle << endl;
+
+    // Multiple styles chained
+    cout.move(45, 0);
+    cout << setBold(true) << setItalic(true) << setUnderline(true) << "Bold + Italic + Underlined" << clearStyle << endl;
+
+    // Hidden test
+    cout.move(46, 0);
+    cout << "This text is " << setHidden(true) << "hidden" << setHidden(false) << ", now it's back." << endl;
+
+
+    // === Orientation Movement Test ===
+    cout.move(48, 0);
+    cout << "=== Orientation Movement Test ===" << endl;
+
+    // Draw a + shape using relative cursor movement
+    cout.move(50, 40); // Center position
+
+    cout << "O" 
+         << move(Direction::right, 1);                    // Starting point
+    cout << move(Direction::up, 1) << "|"
+         << move(Direction::right, 1)
+         << move(Direction::down, 2) << "|" 
+         << move(Direction::up, 1);    // back to center
+    cout << "-"
+         << move(Direction::right, 3) << "-"
+         << move(Direction::left, 2); // return to center
+
+
+    cout.move(53, 0);
+    cout << "Expected Output: '+' shape centered at (52, 40)" << endl;
+
+
     // Final cursor move
-    cout.move(35, 0);
+    cout.move(55, 0);
     cout << "=== Cursor Test End ===" << endl;
 }

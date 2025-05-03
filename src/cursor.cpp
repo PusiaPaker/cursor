@@ -52,4 +52,11 @@ namespace cur {
         c_strWrite(c_str);
         return (*this);
     }
+
+    Cursor& sendStyleCursorCode(Cursor& c, bool cond, int escCode, int resetCode) {
+        int code = cond ? escCode : resetCode;
+        std::string str = std::format("\033[{}m", code);
+        c << str.c_str();
+        return c;
+    }
 }
