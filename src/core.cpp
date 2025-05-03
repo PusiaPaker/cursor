@@ -1,10 +1,8 @@
-#include <string>
-#include <unistd.h> 
-#include <cstring> 
+#include "cursor/core.hpp"
+#include <cstring>
 #include <stdlib.h>
 #include <format>
-
-#include "cursor.hpp"
+#include <unistd.h> 
 
 #if _WIN32 
 
@@ -51,12 +49,5 @@ namespace cur {
         const char* c_str = CLEAR_SCREEN;
         c_strWrite(c_str);
         return (*this);
-    }
-
-    Cursor& sendStyleCursorCode(Cursor& c, bool cond, int escCode, int resetCode) {
-        int code = cond ? escCode : resetCode;
-        std::string str = std::format("\033[{}m", code);
-        c << str.c_str();
-        return c;
     }
 }
