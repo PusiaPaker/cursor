@@ -1,35 +1,57 @@
 cmake_minimum_required(VERSION 3.15)
-
 project(Cursor VERSION 1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Include headers
+# Header files
 include_directories(include)
 
-# Collect all .cpp files in src/ (recursively if needed)
+# Source files
 file(GLOB_RECURSE LIB_SOURCES CONFIGURE_DEPENDS src/*.cpp)
 
-# Define static library
+# Static library
 add_library(${PROJECT_NAME} STATIC ${LIB_SOURCES})
+target_include_directories(${PROJECT_NAME}
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+)
 
-# Make include path public for consumers
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-
-# Enable subdirectory for test
+# Optional test program
 add_subdirectory(test)
 
-# Installation rules (optional but recommended for reuse)
-install(TARGETS ${PROJECT_NAME}
-        EXPORT CursorTargets
-        ARCHIVE DESTINATION lib
-        LIBRARY DESTINATION lib
-        RUNTIME DESTINATION bin)
+# ========== Installation Support ==========
 
+# Install the compiled library
+install(TARGETS ${PROJECT_NAME}
+    EXPORT CursorTargets
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
+)
+
+# Install headers
 install(DIRECTORY include/ DESTINATION include)
 
-export(EXPORT CursorTargets
-       FILE "${CMAKE_CURRENT_BINARY_DIR}/CursorTargets.cmake"
-       NAMESPACE Cursor::)
+# Export targets for find_package support
+install(EXPORT CursorTargets
+    FILE CursorTargets.cmake
+    NAMESPACE Cursor::
+    DESTINATION lib/cmake/Cursor
+)
+
+# Generate a config file for find_package
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/CursorConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/CursorConfig.cmake
+    INSTALL_DESTINATION lib/cmake/Cursor
+)
+
+# Install config file
+install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/CursorConfig.cmake
+    DESTINATION lib/cmake/Cursor
+)
