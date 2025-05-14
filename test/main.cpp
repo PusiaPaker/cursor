@@ -1,4 +1,4 @@
-#include "cursor/cursor.hpp"
+#include "cursor.hpp"
 
 using namespace cur;
 
