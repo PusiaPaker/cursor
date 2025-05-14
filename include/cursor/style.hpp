@@ -2,61 +2,50 @@
 
 namespace cur {
     class Cursor;
+    extern Cursor cout;
 
-    Cursor& applyCursorVisibility(Cursor& c, bool cond);
     Cursor& sendStyleCursorCode(Cursor& c, bool cond, int escCode, int resetCode);
+    Cursor& applyCursorVisibility(Cursor& c, bool cond);
 
-    inline auto setBold(bool opt) {
-        return [=](Cursor& c) -> Cursor& {
-            return sendStyleCursorCode(c, opt, 1, 22);
-        };
-    }
+    #define DEFINE_STYLE(name, escCode, resetCode) \
+        struct name##_t { \
+            bool opt; \
+            name##_t(bool o) : opt(o) {} \
+            Cursor& operator()(Cursor& c) const { \
+                return sendStyleCursorCode(c, opt, escCode, resetCode); \
+            } \
+            operator auto() const { \
+                bool localOpt = opt; \
+                return [localOpt](Cursor& c) -> Cursor& { \
+                    return sendStyleCursorCode(c, localOpt, escCode, resetCode); \
+                }; \
+            } \
+        }; \
+        inline name##_t name(bool opt) { return name##_t(opt); }
 
-    inline auto setFaint(bool opt) {
-        return [=](Cursor& c) -> Cursor& {
-            return sendStyleCursorCode(c, opt, 2, 22);
-        };
-    }
+    DEFINE_STYLE(setBold, 1, 22)
+    DEFINE_STYLE(setFaint, 2, 22)
+    DEFINE_STYLE(setItalic, 3, 23)
+    DEFINE_STYLE(setUnderline, 4, 24)
+    DEFINE_STYLE(setBlinking, 5, 25)
+    DEFINE_STYLE(setInverse, 7, 27)
+    DEFINE_STYLE(setHidden, 8, 28)
+    DEFINE_STYLE(setStrikethrough, 9, 29)
 
-    inline auto setItalic(bool opt) {
-        return [=](Cursor& c) -> Cursor& {
-            return sendStyleCursorCode(c, opt, 3, 23);
-        };
-    }
+    struct setCursorVisibility_t {
+        bool opt;
+        setCursorVisibility_t(bool o) : opt(o) {}
+        Cursor& operator()(Cursor& c) const {
+            return applyCursorVisibility(c, opt);
+        }
+        operator auto() const {
+            bool localOpt = opt;
+            return [localOpt](Cursor& c) -> Cursor& {
+                return applyCursorVisibility(c, localOpt);
+            };
+        }
+    };
+    inline setCursorVisibility_t setCursorVisibility(bool opt) { return {opt}; }
 
-    inline auto setUnderline(bool opt) {
-        return [=](Cursor& c) -> Cursor& {
-            return sendStyleCursorCode(c, opt, 4, 24);
-        };
-    }
-
-    inline auto setBlinking(bool opt) {
-        return [=](Cursor& c) -> Cursor& {
-            return sendStyleCursorCode(c, opt, 5, 25);
-        };
-    }
-
-    inline auto setInverse(bool opt) {
-        return [=](Cursor& c) -> Cursor& {
-            return sendStyleCursorCode(c, opt, 7, 27);
-        };
-    }
-
-    inline auto setHidden(bool opt) {
-        return [=](Cursor& c) -> Cursor& {
-            return sendStyleCursorCode(c, opt, 8, 28);
-        };
-    }
-
-    inline auto setStrikethrough (bool opt) {
-        return [=](Cursor& c) -> Cursor& {
-            return sendStyleCursorCode(c, opt, 9, 29);
-        };
-    }
-
-    inline auto setCursorVisibility(bool opt) {
-        return [=](Cursor& c) -> Cursor& {
-            return applyCursorVisibility(c,opt);
-        };
-    }
+    #undef DEFINE_STYLE
 }

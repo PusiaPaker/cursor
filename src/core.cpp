@@ -1,7 +1,6 @@
 #include "cursor/core.hpp"
 #include <cstring>
 #include <stdlib.h>
-#include <format>
 #include <unistd.h> 
 
 #if _WIN32 
@@ -40,8 +39,9 @@ namespace cur {
     }
 
     Cursor& Cursor::move(int row, int col) {
-        std::string str = std::format("\033[{};{}H", row, col);
-        c_strWrite(str.c_str());
+        char buf[32];
+        int len = std::snprintf(buf, sizeof(buf), "\033[%d;%dH", row, col);
+        c_strWrite(buf);
         return (*this);
     }
 

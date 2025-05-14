@@ -1,12 +1,11 @@
 #include "cursor/movement.hpp"
 #include "cursor/core.hpp"
 
-#include <format>
-
 namespace cur {
-    Cursor& applyMove(Cursor& c, int col, int row) {
-        std::string str = std::format("\033[{};{}H", row, col);
-        c << str.c_str();
+    Cursor& applyMove(Cursor& c, int row, int col) {
+        char buf[32];
+        int len = std::snprintf(buf, sizeof(buf), "\033[%d;%dH", row, col);
+        c << buf;
         return c;
     }
 
@@ -27,8 +26,9 @@ namespace cur {
                     break;
             
             }
-            std::string str = std::format("\033[{}{}", distance, chr);
-            c << str.c_str();
+            char buf[32];
+            int len = std::snprintf(buf, sizeof(buf), "\033[%d%c", distance, chr);
+            c << buf;
             return c;
     }
 }

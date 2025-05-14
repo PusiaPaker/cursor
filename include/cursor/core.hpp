@@ -3,8 +3,8 @@
 #include <string>
 #include <string_view>
 
-#define CLEAR_STYLE "\033[0m"
-#define CLEAR_SCREEN "\033[2J"
+inline constexpr const char* CLEAR_STYLE = "\033[0m";
+inline constexpr const char* CLEAR_SCREEN = "\033[2J";
 
 namespace cur {
 
@@ -23,12 +23,16 @@ namespace cur {
         Cursor& operator<<(std::string_view);
 
         template <typename F>
-        Cursor& operator<<(F func) requires requires(Cursor& c) { func(c); } {
+        std::enable_if_t<
+            std::is_invocable_r_v<Cursor&, F, Cursor&> &&
+            !std::is_arithmetic_v<F>, Cursor&>
+        operator<<(F func) {
             return func(*this);
         }
-
+        
         template <typename T>
-        Cursor& operator<<(T val) requires std::is_arithmetic_v<T> {
+        std::enable_if_t<std::is_arithmetic<T>::value, Cursor&>
+        operator<<(T val) {
             std::string str = std::to_string(val);
             c_strWrite(str.c_str());
             return *this;
@@ -36,6 +40,16 @@ namespace cur {
 
     private:
         void c_strWrite(const char*) const;
+
+        struct ResetOnExit {
+            ~ResetOnExit() {
+                std::fwrite("\033[0m", 1, 4, stdout);
+                std::fflush(stdout);
+            }
+        };
+    
+        static ResetOnExit _reseter;
     };
 
+    inline Cursor::ResetOnExit Cursor::_reseter{};
 }

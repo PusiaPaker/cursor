@@ -33,7 +33,8 @@ install(TARGETS ${PROJECT_NAME}
 )
 
 # Install headers
-install(DIRECTORY include/ DESTINATION include)
+install(FILES ${CMAKE_SOURCE_DIR}/include/cursor.hpp DESTINATION include)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/cursor DESTINATION include)
 
 # Export targets for find_package support
 install(EXPORT CursorTargets

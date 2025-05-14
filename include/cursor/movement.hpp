@@ -8,9 +8,9 @@ namespace cur {
     Cursor& applyMove(Cursor&, int, int);
     Cursor& applyMove(Cursor&, Direction, int);
 
-    inline auto move(int col, int row) {
+    inline auto move(int row, int col) {
         return [=](Cursor& c) -> Cursor& {
-            return applyMove(c, col, row);
+            return applyMove(c, row, col);
         };
     }
 
